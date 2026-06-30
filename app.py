@@ -4,10 +4,8 @@ import requests
 import json
 import re
 
-# Render використовує змінну оточення PORT, якщо її немає — беремо 5000 за дефолтом
 app = Flask(__name__, static_folder='.')
 
-# Беруться автоматично з панелі Render (Environment Variables)
 SERPER_API_KEY = os.environ.get("SERPER_API_KEY", "d23491c477d6167ec1067dbe92dea507e5bde7ce")
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "AQ.Ab8RN6IpGKOEolRn0lf90fkHoEPd9pYLXa5awn2tP9qrJmBlLA")
 
@@ -49,16 +47,10 @@ def search_google_image(search_query):
     return None
 
 def parse_single_price(title, snippet):
-    """Шукає реальну ціну деталі в тексті, повністю ігноруючи роки авто та номери моделей"""
     text = f"{title} {snippet}"
-    
-    # Вирізаємо автомобільні роки (1980-2030), щоб код не прийняв їх за ціну
     text = re.sub(r'\b(19\d{2}|20[0-2]\d|2030)\b', ' ', text)
-    
-    # Вирізаємо цифри моделей (наприклад, 240, 200, 320), які часто є в запитах до Мерседесів
     text = re.sub(r'\b(240|200|320|220|280)\b', ' ', text)
     
-    # 1. Пошук чисел, біля яких явно стоїть валюта (грн, uah, eur, €, zł, pln, $)
     found = re.findall(r'(\b\d+[\s,.]?\d*\b)\s*(?:грн|uah|€|eur|zł|pln|\$)|(?:€|\$)\s*(\b\d+[\s,.]?\d*\b)', text, re.IGNORECASE)
     for f in found:
         num_str = f[0] if f[0] else f[1]
@@ -68,7 +60,6 @@ def parse_single_price(title, snippet):
             if 1200 <= val <= 90000:
                 return val
 
-    # 2. Пошук за маркерами ціни ("ціна", "price", "cena")
     match = re.search(r'(?:ціна|price|cena)[:\s\-]*(\b\d+[\s,.]?\d*\b)', text, re.IGNORECASE)
     if match:
         clean_num = ''.join(c for c in match.group(1) if c.isdigit())
@@ -77,7 +68,6 @@ def parse_single_price(title, snippet):
             if 1200 <= val <= 90000:
                 return val
 
-    # 3. Шукаємо будь-які голі великі числа
     raw_numbers = re.findall(r'\b\d{4,5}\b', text)
     for num in raw_numbers:
         val = int(num)
@@ -94,7 +84,6 @@ def search_global_offers(search_query):
     global_query = f"{clean_query} бампер (шрот OR розборка OR олх OR prom)"
     
     offers = []
-    
     try:
         response = requests.post(url, json={"q": global_query, "num": 10}, headers=headers, timeout=7)
         results = response.json().get('organic', [])
@@ -110,7 +99,6 @@ def search_global_offers(search_query):
             snippet = item.get('snippet', '')
             link = item.get('link', '#')
             
-            # Передаємо тільки чисту дату з Google (без подвійного слова "Публікація")
             raw_date = item.get('date', '').strip()
             date_text = raw_date if raw_date else "нещодавно"
             
@@ -119,13 +107,24 @@ def search_global_offers(search_query):
                 price_text = f"{price_val} грн"
             else:
                 price_text = "Договірна"
+            
+            # --- РОЗУМНЕВИЗНАЧЕННЯ НАЯВНОСТІ ---
+            full_text = f"{title} {snippet}".lower()
+            if "під замовлення" in full_text or "замовлення" in full_text or "not in stock" in full_text:
+                stock_text = "Під замовлення"
+            elif "немає в наявності" in full_text or "немає" in full_text:
+                stock_text = "Немає в наявності"
+            else:
+                stock_text = "В наявності"
+            # ----------------------------------
                 
             offers.append({
                 "title": title,
                 "link": link,
                 "price": price_text,
                 "date": date_text,
-                "snippet": snippet
+                "snippet": snippet,
+                "stock": stock_text  # Нове поле
             })
     except Exception as e:
         print(f"Помилка глобального пошуку: {e}")
