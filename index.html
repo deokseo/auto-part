@@ -3,213 +3,173 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Глобальний пошук та аналітика автозапчастин</title>
+    <title>Пошук та аналітика автозапчастин</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #0f172a;
-            color: #f8fafc;
+            background-color: #1a2332;
+            color: #fff;
             margin: 0;
-            padding: 20px;
+            padding: 40px 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
 
         h1 {
-            color: #f97316;
-            margin-bottom: 20px;
+            color: #ff7300;
+            margin-bottom: 30px;
+            font-size: 26px;
             text-align: center;
-            font-size: 28px;
         }
 
-        .search-container {
-            width: 100%;
-            max-width: 700px;
+        .search-box {
             display: flex;
             gap: 10px;
-            margin-bottom: 30px;
+            width: 100%;
+            max-width: 700px;
+            margin-bottom: 40px;
         }
 
-        input[type="text"] {
+        input {
             flex: 1;
-            padding: 15px;
-            border: 1px solid #334155;
-            border-radius: 8px;
-            background-color: #1e293b;
+            padding: 14px 20px;
+            border-radius: 6px;
+            border: 1px solid #2e3d52;
+            background-color: #242f41;
             color: #fff;
-            font-size: 16px;
+            font-size: 15px;
             outline: none;
         }
 
-        input[type="text"]:focus {
-            border-color: #3b82f6;
-        }
-
         button {
-            padding: 15px 25px;
+            padding: 14px 28px;
+            border-radius: 6px;
+            border: none;
             background-color: #2563eb;
             color: #fff;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: bold;
             cursor: pointer;
-            transition: background 0.2s;
+            white-space: nowrap;
         }
 
         button:hover {
             background-color: #1d4ed8;
         }
 
-        .main-layout {
+        .container {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 20px;
+            gap: 25px;
             width: 100%;
-            max-width: 1200px;
+            max-width: 1100px;
         }
 
         @media (max-width: 768px) {
-            .main-layout {
+            .container {
                 grid-template-columns: 1fr;
             }
         }
 
-        .panel {
-            background-color: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 12px;
-            padding: 20px;
-            min-height: 200px;
+        .card {
+            background-color: #202b3c;
+            border-radius: 8px;
+            padding: 25px;
+            border: 1px solid #2d3b50;
         }
 
-        .panel h2 {
+        .card h2 {
+            font-size: 16px;
+            color: #ff7300;
             margin-top: 0;
-            font-size: 18px;
-            color: #f97316;
-            border-bottom: 1px solid #334155;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #2d3b50;
             padding-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
         }
 
-        .ai-content {
-            white-space: pre-wrap;
+        .info-text {
+            color: #8fa0b5;
+            font-size: 14px;
             line-height: 1.6;
-            font-size: 15px;
-            color: #cbd5e1;
+            white-space: pre-wrap;
         }
 
-        .part-image {
-            width: 100%;
-            max-height: 250px;
-            object-fit: contain;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            background-color: #0f172a;
-            display: none;
-        }
-
-        .offer-card {
-            background-color: #0f172a;
-            border: 1px solid #334155;
-            border-radius: 8px;
+        .offer-item {
+            background-color: #171f2b;
+            border-radius: 6px;
             padding: 15px;
             margin-bottom: 15px;
+            border: 1px solid #243144;
         }
 
-        .offer-card h3 {
-            margin: 0 0 8px 0;
-            font-size: 16px;
+        .offer-item h3 {
+            margin: 0 0 10px 0;
+            font-size: 15px;
         }
 
-        .offer-card h3 a {
+        .offer-item h3 a {
             color: #3b82f6;
             text-decoration: none;
         }
 
-        .offer-card h3 a:hover {
+        .offer-item h3 a:hover {
             text-decoration: underline;
         }
 
-        .offer-card p {
-            margin: 0 0 10px 0;
-            font-size: 14px;
-            color: #94a3b8;
+        .offer-item p {
+            margin: 0 0 12px 0;
+            font-size: 13px;
+            color: #7c8ba1;
         }
 
-        .offer-meta {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            font-size: 14px;
+        .meta-row {
+            font-size: 13px;
             font-weight: bold;
+            color: #ff7300;
         }
 
-        .status-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .offer-date {
-            margin-top: 5px;
-            font-size: 12px;
-            color: #64748b;
-        }
-
-        .loader {
-            text-align: center;
-            color: #94a3b8;
-            font-style: italic;
-            padding: 20px 0;
+        .date-text {
+            font-size: 11px;
+            color: #56667a;
+            margin-top: 6px;
         }
     </style>
 </head>
 <body>
 
-    <h1>Глобальний пошук та аналітика автозапчастин</h1>
+    <h1>Пошук та аналітика автозапчастин</h1>
 
-    <div class="search-container">
-        <input type="text" id="searchQuery" placeholder="Наприклад: Передній бампер Мерседес 240 1996 р.в.">
-        <button id="searchBtn" onclick="startSearch()">Знайти оголошення та розшифрувати</button>
+    <div class="search-box">
+        <input type="text" id="queryInput" placeholder="Наприклад: Передній бампер Мерседес 240 1996 р.в.">
+        <button id="actionBtn" onclick="doSearch()">Знайти</button>
     </div>
 
-    <div class="main-layout">
-        <div class="panel">
+    <div class="container">
+        <div class="card">
             <h2>🌐 Знайдені пропозиції (Україна та Європа)</h2>
-            <img id="partImg" class="part-image" src="" alt="Зображення деталі">
-            <div id="offersContainer">
-                <div style="color: #64748b;">Введіть запит для пошуку пропозицій на ринку...</div>
-            </div>
+            <div id="offersResult" class="info-text">Введіть запит для пошуку пропозицій на ринку...</div>
         </div>
 
-        <div class="panel">
+        <div class="card">
             <h2>🔧 Аналітика та розшифровка OEM</h2>
-            <div id="aiContainer" class="ai-content">
-                <div style="color: #64748b;">Тут з'явиться детальний аналіз деталі та розшифровка її кодів від ШІ...</div>
-            </div>
+            <div id="aiResult" class="info-text">Тут з'явиться детальний аналіз деталі та розшифровка її кодів від ШІ...</div>
         </div>
     </div>
 
     <script>
-        async function startSearch() {
-            const query = document.getElementById('searchQuery').value.trim();
-            if (!query) return alert('Будь ласка, введіть запит!');
+        async function doSearch() {
+            const query = document.getElementById('queryInput').value.trim();
+            if (!query) return;
 
-            const btn = document.getElementById('searchBtn');
-            const offersContainer = document.getElementById('offersContainer');
-            const aiContainer = document.getElementById('aiContainer');
-            const partImg = document.getElementById('partImg');
+            const btn = document.getElementById('actionBtn');
+            const offersResult = document.getElementById('offersResult');
+            const aiResult = document.getElementById('aiResult');
 
-            // Вмикаємо режим завантаження
             btn.disabled = true;
-            btn.innerText = 'Пошук та аналіз...';
-            offersContainer.innerHTML = '<div class="loader">Шукаємо найкращі пропозиції на шротах...</div>';
-            aiContainer.innerHTML = '<div class="loader">ШІ аналізує марку, модель та коди...</div>';
-            partImg.style.display = 'none';
+            btn.innerText = 'Пошук...';
+            offersResult.innerHTML = 'Шукаємо пропозиції...';
+            aiResult.innerHTML = 'ШІ аналізує запит...';
 
             try {
                 const response = await fetch('/search', {
@@ -220,52 +180,39 @@
 
                 const data = await response.json();
 
-                // 1. Виведення аналітики ШІ
-                aiContainer.innerText = data.ai_text || 'Не вдалося отримати аналітику.';
+                aiResult.innerText = data.ai_text || 'Не вдалося отримати аналітику.';
 
-                // 2. Виведення картинки
-                if (data.image_url) {
-                    partImg.src = data.image_url;
-                    partImg.style.display = 'block';
-                }
-
-                // 3. Виведення пропозицій та їх наявності
-                offersContainer.innerHTML = '';
+                offersResult.innerHTML = '';
                 if (data.offers && data.offers.length > 0) {
                     data.offers.forEach(offer => {
-                        const card = document.createElement('div');
-                        card.className = 'offer-card';
+                        const div = document.createElement('div');
+                        div.className = 'offer-item';
 
-                        // Визначаємо колір індикатора наявності
-                        let stockColor = '#eab308'; // Жовтий за дефолтом (Під замовлення)
-                        if (offer.stock === 'В наявності') {
-                            stockColor = '#22c55e'; // Зелений
-                        } else if (offer.stock === 'Немає в наявності') {
-                            stockColor = '#ef4444'; // Червоний
-                        }
+                        let stockColor = '#eab308'; 
+                        if (offer.stock === 'В наявності') stockColor = '#22c55e';
+                        if (offer.stock === 'Немає в наявності') stockColor = '#ef4444';
 
-                        card.innerHTML = `
+                        div.innerHTML = `
                             <h3><a href="${offer.link}" target="_blank">${offer.title}</a></h3>
                             <p>${offer.snippet}</p>
-                            <div class="offer-meta">
-                                <span style="color: #f97316;">Ціна: ${offer.price}</span>
-                                <span class="status-badge" style="color: ${stockColor};">● ${offer.stock}</span>
+                            <div class="meta-row">
+                                Ціна: ${offer.price} &nbsp;&nbsp;|&nbsp;&nbsp; 
+                                <span style="color: ${stockColor};">● ${offer.stock}</span>
                             </div>
-                            <div class="offer-date">📅 Публікація: ${offer.date}</div>
+                            <div class="date-text">📅 Публікація: ${offer.date}</div>
                         `;
-                        offersContainer.appendChild(card);
+                        offersResult.appendChild(div);
                     });
                 } else {
-                    offersContainer.innerHTML = '<div style="color: #ef4444;">Нічого не знайдено за цим запитом. Спробуйте змінити слова.</div>';
+                    offersResult.innerHTML = 'Нічого не знайдено.';
                 }
 
-            } catch (error) {
-                console.error(error);
-                offersContainer.innerHTML = '<div style="color: #ef4444;">Помилка при отриманні даних з сервера.</div>';
-                aiContainer.innerHTML = '<div style="color: #ef4444;">Не вдалося з'єднатися з сервером аналітики.</div>';
+            } catch (e) {
+                offersResult.innerHTML = 'Помилка з\'єднання.';
+                aiResult.innerHTML = 'Помилка з\'єднання.';
             } finally {
                 btn.disabled = false;
-                btn.innerText = 'Знайти оголошення та розшифрувати';
+                btn.innerText = 'Знайти';
             }
         }
     </script>
