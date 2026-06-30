@@ -1,0 +1,174 @@
+import os
+from flask import Flask, request, jsonify, send_from_directory
+import requests
+import json
+import re
+
+app = Flask(__name__, static_folder='.')
+
+# ==========================================
+# ⚠️ ВСТАВ СВІЇ КЛЮЧІ СЮДИ:
+SERPER_API_KEY = "d23491c477d6167ec1067dbe92dea507e5bde7ce"
+GEMINI_API_KEY = "AQ.Ab8RN6IpGKOEolRn0lf90fkHoEPd9pYLXa5awn2tP9qrJmBlLA" # Можна залишити порожнім
+# ==========================================
+
+def ask_free_ai(prompt_text):
+    try:
+        response = requests.post("https://chateverywhere.app/api/chat/", json={
+            "model": "gpt-4o-mini",
+            "messages": [{"role": "user", "content": prompt_text}]
+        }, timeout=10)
+        return response.text
+    except:
+        return "Не вдалося отримати аналітику."
+
+def ask_gemini(prompt_text):
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
+    headers = {"Content-Type": "application/json"}
+    data = {"contents": [{"parts": [{"text": prompt_text}]}]}
+    try:
+        response = requests.post(url, json=data, headers=headers, timeout=7)
+        res_json = response.json()
+        if 'candidates' in res_json:
+            return res_json['candidates'][0]['content']['parts'][0]['text']
+        else:
+            return ask_free_ai(prompt_text)
+    except:
+        return ask_free_ai(prompt_text)
+
+def search_google_image(search_query):
+    url = "https://google.serper.dev/images"
+    headers = {"X-API-KEY": SERPER_API_KEY, "Content-Type": "application/json"}
+    data = {"q": f"{search_query} передній бампер шрот oem", "num": 1}
+    try:
+        response = requests.post(url, json=data, headers=headers, timeout=5)
+        images = response.json().get('images', [])
+        if images and 'thumbnailUrl' in images[0]:
+            return images[0]['thumbnailUrl']
+    except:
+        pass
+    return None
+
+def parse_single_price(title, snippet):
+    """Шукає реальну ціну деталі в тексті, повністю ігноруючи роки авто та номери моделей"""
+    text = f"{title} {snippet}"
+    
+    # Вирізаємо автомобільні роки (1980-2030), щоб код не прийняв їх за ціну
+    text = re.sub(r'\b(19\d{2}|20[0-2]\d|2030)\b', ' ', text)
+    
+    # Вирізаємо цифри моделей (наприклад, 240, 200, 320), які часто є в запитах до Мерседесів
+    text = re.sub(r'\b(240|200|320|220|280)\b', ' ', text)
+    
+    # 1. Пошук чисел, біля яких явно стоїть валюта (грн, uah, eur, €, zł, pln, $)
+    found = re.findall(r'(\b\d+[\s,.]?\d*\b)\s*(?:грн|uah|€|eur|zł|pln|\$)|(?:€|\$)\s*(\b\d+[\s,.]?\d*\b)', text, re.IGNORECASE)
+    for f in found:
+        num_str = f[0] if f[0] else f[1]
+        clean_num = ''.join(c for c in num_str if c.isdigit())
+        if clean_num:
+            val = int(clean_num)
+            if 1200 <= val <= 90000:
+                return val
+
+    # 2. Пошук за маркерами ціни ("ціна", "price", "cena")
+    match = re.search(r'(?:ціна|price|cena)[:\s\-]*(\b\d+[\s,.]?\d*\b)', text, re.IGNORECASE)
+    if match:
+        clean_num = ''.join(c for c in match.group(1) if c.isdigit())
+        if clean_num:
+            val = int(clean_num)
+            if 1200 <= val <= 90000:
+                return val
+
+    # 3. Шукаємо будь-які голі великі числа
+    raw_numbers = re.findall(r'\b\d{4,5}\b', text)
+    for num in raw_numbers:
+        val = int(num)
+        if 1500 <= val <= 45000:
+            return val
+
+    return None
+
+def search_global_offers(search_query):
+    url = "https://google.serper.dev/search"
+    headers = {"X-API-KEY": SERPER_API_KEY, "Content-Type": "application/json"}
+    
+    clean_query = search_query.replace("р.в.", "").replace("рік", "").strip()
+    global_query = f"{clean_query} бампер (шрот OR розборка OR олх OR prom)"
+    
+    offers = []
+    
+    try:
+        response = requests.post(url, json={"q": global_query, "num": 10}, headers=headers, timeout=7)
+        results = response.json().get('organic', [])
+        
+        if not results:
+            words = clean_query.split()
+            short_query = f"{words[0]} бампер купити розборка" if words else "бампер купити розборка"
+            response = requests.post(url, json={"q": short_query, "num": 8}, headers=headers, timeout=7)
+            results = response.json().get('organic', [])
+
+        for item in results:
+            title = item.get('title', 'Автозапчастина')
+            snippet = item.get('snippet', '')
+            link = item.get('link', '#')
+            
+            # ВИПРАВЛЕНО: передаємо тільки чисту дату з Google, без повторного слова "Публікація:"
+            raw_date = item.get('date', '').strip()
+            date_text = raw_date if raw_date else "нещодавно"
+            
+            price_val = parse_single_price(title, snippet)
+            if price_val:
+                price_text = f"{price_val} грн"
+            else:
+                price_text = "Договірна"
+                
+            offers.append({
+                "title": title,
+                "link": link,
+                "price": price_text,
+                "date": date_text,
+                "snippet": snippet
+            })
+    except Exception as e:
+        print(f"Помилка глобального пошуку: {e}")
+        
+    return offers
+
+@app.route('/')
+def index():
+    return send_from_directory('.', 'index.html')
+
+@app.route('/search', methods=['POST'])
+def search_part():
+    try:
+        user_data = request.json.get('query', '')
+        
+        prompt = f"""
+        Ти професійний помічник авторозборщика. Розклади детально запит: {user_data}.
+        У відповіді категорично заборонено використовувати будь-які символи решіток або зірочок.
+        Видай інформацію строго за такою схемою, просто чистим текстом:
+        
+        АВТОМОБІЛЬ ТА ДЕТАЛЬ:
+        Визнач марку, модель, рік та назву деталі.
+        
+        РОЗШИФРОВКА OEM КОДІВ:
+        Знайди можливі оригінальні артикули. Для кожного коду розпиши, що означає кожна група символів (наприклад, для Mercedes: А - легкове авто, перші 3 цифри - кузов і т.д.).
+        """
+        
+        ai_response = ask_gemini(prompt).replace('#', '').replace('*', '')
+        image_url = search_google_image(user_data)
+        offers = search_global_offers(user_data)
+        
+        return jsonify({
+            "ai_text": ai_response,
+            "image_url": image_url,
+            "offers": offers
+        })
+    except Exception as e:
+        return jsonify({
+            "ai_text": f"Помилка сервера: {str(e)}",
+            "image_url": None,
+            "offers": []
+        })
+
+if __name__ == '__main__':
+    app.run(debug=True, port=5000)
