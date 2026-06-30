@@ -10,85 +10,79 @@
             background-color: #0a0f1d;
             color: #f1f5f9;
             margin: 0;
-            padding: 60px 20px;
+            padding: 30px 20px; /* Уменьшили верхний отступ */
             display: flex;
             flex-direction: column;
             align-items: center;
-            background-image: radial-gradient(circle at 50% 0%, #1e1b4b 0%, #0a0f1d 70%);
+            background-image: radial-gradient(circle at 50% 0%, #131a35 0%, #0a0f1d 70%);
         }
 
         h1 {
-            background: linear-gradient(to right, #ff7300, #f59e0b);
+            background: linear-gradient(to right, #00f2fe, #3b82f6); /* Стильный неоновый градиент вместо оранжевого */
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 35px;
-            font-size: 32px;
+            margin-bottom: 20px; /* Сжали расстояние до инпута */
+            font-size: 28px;
             text-align: center;
             font-weight: 800;
             letter-spacing: -0.5px;
-            text-shadow: 0 4px 20px rgba(255, 115, 0, 0.15);
         }
 
         .search-box {
             display: flex;
-            gap: 12px;
+            gap: 10px;
             width: 100%;
             max-width: 750px;
-            margin-bottom: 50px;
-            background: rgba(30, 41, 59, 0.5);
-            padding: 8px;
-            border-radius: 12px;
-            border: 1px solid rgba(255, 115, 0, 0.2);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255,255,255,0.05);
+            margin-bottom: 30px; /* Уменьшили отступ до карточек результатов */
+            background: rgba(30, 41, 59, 0.4);
+            padding: 6px;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 242, 254, 0.2); /* Акцентная рамка в цвет темы */
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
             backdrop-filter: blur(10px);
         }
 
         input {
             flex: 1;
-            padding: 16px 20px;
-            border-radius: 8px;
+            padding: 12px 18px; /* Чуть компактнее внутренние отступы */
+            border-radius: 6px;
             border: 1px solid #1e293b;
             background-color: #0f172a;
             color: #fff;
-            font-size: 16px;
+            font-size: 15px;
             outline: none;
             transition: all 0.3s ease;
         }
 
         input:focus {
-            border-color: #3b82f6;
-            box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
-            background-color: #1e293b;
+            border-color: #00f2fe;
+            box-shadow: 0 0 10px rgba(0, 242, 254, 0.2);
         }
 
         button {
-            padding: 16px 36px;
-            border-radius: 8px;
+            padding: 12px 28px;
+            border-radius: 6px;
             border: none;
             background: linear-gradient(135deg, #2563eb, #1d4ed8);
             color: #fff;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: bold;
             cursor: pointer;
             white-space: nowrap;
             transition: transform 0.2s, box-shadow 0.2s;
-            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
         }
 
         button:hover {
             transform: translateY(-1px);
-            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.6);
+            box-shadow: 0 6px 15px rgba(37, 99, 235, 0.5);
             background: linear-gradient(135deg, #3b82f6, #2563eb);
-        }
-
-        button:active {
-            transform: translateY(1px);
         }
 
         .container {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 30px;
+            gap: 20px; /* Уменьшили зазор между колонками */
             width: 100%;
             max-width: 1200px;
         }
@@ -101,63 +95,53 @@
 
         .card {
             background: rgba(20, 30, 54, 0.6);
-            border-radius: 12px;
-            padding: 30px;
+            border-radius: 10px;
+            padding: 20px; /* Сделали карточки плотнее */
             border: 1px solid rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(10px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            transition: border-color 0.3s;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
         }
 
         .card:hover {
-            border-color: rgba(255, 115, 0, 0.3);
+            border-color: rgba(0, 242, 254, 0.2);
         }
 
         .card h2 {
-            font-size: 16px;
-            color: #ff7300;
+            font-size: 15px;
+            color: #00f2fe; /* Поменяли оранжевый на бирюзовый неон */
             margin-top: 0;
-            margin-bottom: 25px;
+            margin-bottom: 15px; /* Меньше отступ под заголовком */
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
             font-weight: 700;
         }
 
         .info-text {
             color: #94a3b8;
             font-size: 14px;
-            line-height: 1.7;
+            line-height: 1.6;
             white-space: pre-wrap;
         }
 
         .offer-item {
             background: #0b111e;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
+            border-radius: 8px;
+            padding: 15px; /* Компактные блоки предложений */
+            margin-bottom: 12px;
             border: 1px solid #1e293b;
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
-            animation: fadeIn 0.4s ease forwards;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
         }
 
         .offer-item h3 {
-            margin: 0 0 10px 0;
-            font-size: 16px;
-            font-weight: 600;
+            margin: 0 0 6px 0;
+            font-size: 15px;
         }
 
         .offer-item h3 a {
             color: #60a5fa;
             text-decoration: none;
-            transition: color 0.2s;
         }
 
         .offer-item h3 a:hover {
@@ -166,36 +150,36 @@
         }
 
         .offer-item p {
-            margin: 0 0 16px 0;
+            margin: 0 0 10px 0;
             font-size: 13px;
             color: #94a3b8;
         }
 
         .meta-row {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: bold;
-            color: #f59e0b;
+            color: #38bdf8; /* Акцентный голубой для цен */
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 15px;
             border-top: 1px solid #1e293b;
-            padding-top: 12px;
+            padding-top: 8px;
         }
 
         .status-badge {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            padding: 4px 10px;
-            border-radius: 20px;
+            gap: 5px;
+            padding: 2px 8px;
+            border-radius: 12px;
             font-size: 12px;
-            background: rgba(255,255,255,0.03);
+            background: rgba(255,255,255,0.02);
         }
 
         .date-text {
             font-size: 11px;
-            color: #64748b;
-            margin-top: 8px;
+            color: #576b85;
+            margin-top: 4px;
         }
     </style>
 </head>
@@ -215,7 +199,7 @@
         </div>
 
         <div class="card">
-            <h2>🔧 # Аналітика та розшифровка OEM</h2>
+            <h2>🔧 Аналітика та розшифровка OEM</h2>
             <div id="aiResult" class="info-text">Тут з'явиться детальний аналіз деталі та розшифровка її кодів від ШІ...</div>
         </div>
     </div>
@@ -230,11 +214,11 @@
             const aiResult = document.getElementById('aiResult');
 
             btn.disabled = true;
-            btn.style.background = '#475569';
+            btn.style.background = '#334155';
             btn.style.boxShadow = 'none';
             btn.innerText = 'Пошук...';
-            offersResult.innerHTML = '<div style="color: #64748b; font-style: italic;">Сканування баз даних...</div>';
-            aiResult.innerHTML = '<div style="color: #64748b; font-style: italic;">Генерація ШІ аналітики...</div>';
+            offersResult.innerHTML = '<div style="color: #576b85; font-style: italic;">Сканування баз даних...</div>';
+            aiResult.innerHTML = '<div style="color: #576b85; font-style: italic;">Генерація ШІ аналітики...</div>';
 
             try {
                 const response = await fetch('/search', {
@@ -254,23 +238,23 @@
                         div.className = 'offer-item';
 
                         let stockColor = '#ef4444'; 
-                        let glowStyle = '0 0 10px rgba(239, 68, 68, 0.5)';
+                        let glowStyle = '0 0 8px rgba(239, 68, 68, 0.4)';
                         
                         if (offer.stock === 'В наявності') {
                             stockColor = '#10b981';
-                            glowStyle = '0 0 10px rgba(16, 185, 129, 0.5)';
+                            glowStyle = '0 0 8px rgba(16, 185, 129, 0.4)';
                         } else if (offer.stock === 'Під замовлення') {
                             stockColor = '#f59e0b';
-                            glowStyle = '0 0 10px rgba(245, 158, 11, 0.5)';
+                            glowStyle = '0 0 8px rgba(245, 158, 11, 0.4)';
                         }
 
                         div.innerHTML = `
                             <h3><a href="${offer.link}" target="_blank">${offer.title}</a></h3>
                             <p>${offer.snippet}</p>
                             <div class="meta-row">
-                                <span style="color: #ff7300;">Ціна: ${offer.price}</span>
+                                <span style="color: #00f2fe;">Ціна: ${offer.price}</span>
                                 <span class="status-badge" style="color: ${stockColor}; text-shadow: ${glowStyle};">
-                                    <span style="color: ${stockColor}; text-shadow: ${glowStyle};">●</span> ${offer.stock}
+                                    ● ${offer.stock}
                                 </span>
                             </div>
                             <div class="date-text">📅 Публікація: ${offer.date}</div>
@@ -278,7 +262,7 @@
                         offersResult.appendChild(div);
                     });
                 } else {
-                    offersResult.innerHTML = '<div style="color: #ef4444;">Нічого не знайдено за цим запитом. Спробуйте змінити слова.</div>';
+                    offersResult.innerHTML = '<div style="color: #ef4444;">Нічого не знайдено. Спробуйте інший запит.</div>';
                 }
 
             } catch (e) {
@@ -287,7 +271,7 @@
             } finally {
                 btn.disabled = false;
                 btn.style.background = 'linear-gradient(135deg, #2563eb, #1d4ed8)';
-                btn.style.boxShadow = '0 4px 15px rgba(37, 99, 235, 0.4)';
+                btn.style.boxShadow = '0 4px 12px rgba(37, 99, 235, 0.3)';
                 btn.innerText = 'Знайти';
             }
         }
