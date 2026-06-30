@@ -4,13 +4,12 @@ import requests
 import json
 import re
 
+# Render використовує змінну оточення PORT, якщо її немає — беремо 5000 за дефолтом
 app = Flask(__name__, static_folder='.')
 
-# ==========================================
-# ⚠️ ВСТАВ СВІЇ КЛЮЧІ СЮДИ:
-SERPER_API_KEY = "d23491c477d6167ec1067dbe92dea507e5bde7ce"
-GEMINI_API_KEY = "AQ.Ab8RN6IpGKOEolRn0lf90fkHoEPd9pYLXa5awn2tP9qrJmBlLA" # Можна залишити порожнім
-# ==========================================
+# Беруться автоматично з панелі Render (Environment Variables)
+SERPER_API_KEY = os.environ.get("SERPER_API_KEY", "d23491c477d6167ec1067dbe92dea507e5bde7ce")
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "AQ.Ab8RN6IpGKOEolRn0lf90fkHoEPd9pYLXa5awn2tP9qrJmBlLA")
 
 def ask_free_ai(prompt_text):
     try:
@@ -111,7 +110,7 @@ def search_global_offers(search_query):
             snippet = item.get('snippet', '')
             link = item.get('link', '#')
             
-            # ВИПРАВЛЕНО: передаємо тільки чисту дату з Google, без повторного слова "Публікація:"
+            # Передаємо тільки чисту дату з Google (без подвійного слова "Публікація")
             raw_date = item.get('date', '').strip()
             date_text = raw_date if raw_date else "нещодавно"
             
@@ -171,4 +170,5 @@ def search_part():
         })
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
