@@ -6,8 +6,9 @@ import re
 
 app = Flask(__name__, static_folder='.')
 
-SERPER_API_KEY = os.environ.get("SERPER_API_KEY", "d23491c477d6167ec1067dbe92dea507e5bde7ce")
-GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "AQ.Ab8RN6IpGKOEolRn0lf90fkHoEPd9pYLXa5awn2tP9qrJmBlLA")
+# БЕЗПЕЧНО: Беремо ключі зі змінних оточення Render. Дефолтні текстові ключі видалено.
+SERPER_API_KEY = os.environ.get("SERPER_API_KEY", "")
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
 
 def ask_free_ai(prompt_text):
     try:
@@ -20,6 +21,9 @@ def ask_free_ai(prompt_text):
         return "Не вдалося отримати аналітику."
 
 def ask_gemini(prompt_text):
+    if not GEMINI_API_KEY:
+        return ask_free_ai(prompt_text)
+        
     url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
     headers = {"Content-Type": "application/json"}
     data = {"contents": [{"parts": [{"text": prompt_text}]}]}
@@ -34,6 +38,9 @@ def ask_gemini(prompt_text):
         return ask_free_ai(prompt_text)
 
 def search_google_image(search_query):
+    if not SERPER_API_KEY:
+        return None
+        
     url = "https://google.serper.dev/images"
     headers = {"X-API-KEY": SERPER_API_KEY, "Content-Type": "application/json"}
     data = {"q": f"{search_query} передній бампер шрот oem", "num": 1}
@@ -77,6 +84,9 @@ def parse_single_price(title, snippet):
     return None
 
 def search_global_offers(search_query):
+    if not SERPER_API_KEY:
+        return []
+        
     url = "https://google.serper.dev/search"
     headers = {"X-API-KEY": SERPER_API_KEY, "Content-Type": "application/json"}
     
@@ -108,7 +118,6 @@ def search_global_offers(search_query):
             else:
                 price_text = "Договірна"
             
-            # --- РОЗУМНЕВИЗНАЧЕННЯ НАЯВНОСТІ ---
             full_text = f"{title} {snippet}".lower()
             if "під замовлення" in full_text or "замовлення" in full_text or "not in stock" in full_text:
                 stock_text = "Під замовлення"
@@ -116,7 +125,6 @@ def search_global_offers(search_query):
                 stock_text = "Немає в наявності"
             else:
                 stock_text = "В наявності"
-            # ----------------------------------
                 
             offers.append({
                 "title": title,
@@ -124,7 +132,7 @@ def search_global_offers(search_query):
                 "price": price_text,
                 "date": date_text,
                 "snippet": snippet,
-                "stock": stock_text  # Нове поле
+                "stock": stock_text
             })
     except Exception as e:
         print(f"Помилка глобального пошуку: {e}")
