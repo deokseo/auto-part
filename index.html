@@ -3,271 +3,219 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Глобальний пошук та аналітика автозапчастин</title>
+    <title>Європейський Пошук Запчастин</title>
     <style>
+        :root {
+            --bg: #0b0f19;
+            --card: #141b2d;
+            --accent: #2563eb;
+            --text: #f1f5f9;
+            --green: #10b981;
+        }
         body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: #0a0f1d;
-            color: #f1f5f9;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
             margin: 0;
-            padding: 15px; /* Мінімальний відступ від країв екрану */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            background-image: radial-gradient(circle at 50% 0%, #131a35 0%, #0a0f1d 70%);
+            padding: 40px 20px;
         }
-
+        .container {
+            max-width: 850px;
+            margin: 0 auto;
+        }
         h1 {
-            background: linear-gradient(to right, #00f2fe, #3b82f6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin: 0 0 12px 0;
-            font-size: 24px;
             text-align: center;
-            font-weight: 800;
-            letter-spacing: -0.5px;
+            color: #38bdf8;
+            font-size: 2rem;
+            margin-bottom: 30px;
         }
-
         .search-box {
             display: flex;
-            gap: 8px;
-            width: 100%;
-            max-width: 750px;
-            margin-bottom: 15px;
-            background: rgba(30, 41, 59, 0.4);
-            padding: 4px;
-            border-radius: 8px;
-            border: 1px solid rgba(0, 242, 254, 0.2);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(10px);
+            gap: 12px;
+            background: #1e293b;
+            padding: 6px;
+            border-radius: 12px;
+            border: 1px solid #334155;
+            margin-bottom: 35px;
         }
-
         input {
             flex: 1;
-            padding: 8px 12px;
-            border-radius: 5px;
-            border: 1px solid #1e293b;
-            background-color: #0f172a;
-            color: #fff;
-            font-size: 14px;
+            padding: 14px;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 16px;
             outline: none;
         }
-
-        input:focus {
-            border-color: #00f2fe;
-        }
-
         button {
-            padding: 8px 20px;
-            border-radius: 5px;
+            background: var(--accent);
+            color: white;
             border: none;
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
-            color: #fff;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            white-space: nowrap;
-        }
-
-        .container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            width: 100%;
-            max-width: 1200px;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .card {
-            background: rgba(20, 30, 54, 0.6);
+            padding: 0 28px;
             border-radius: 8px;
-            padding: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.15s;
         }
-
-        .card h2 {
-            font-size: 13px;
-            color: #00f2fe;
-            margin: 0 0 10px 0;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-weight: 700;
-        }
-
-        .info-text {
-            color: #94a3b8;
-            font-size: 13px;
-            line-height: 1.4;
-            white-space: pre-wrap;
-        }
-
-        .offer-item {
-            background: #0b111e;
-            border-radius: 6px;
-            padding: 10px 12px; /* Ущільнили внутрішні поля */
-            margin-bottom: 8px;
-            border: 1px solid #1e293b;
+        button:hover { background: #1d4ed8; }
+        button:disabled { background: #475569; cursor: not-allowed; }
+        .grid {
             display: flex;
             flex-direction: column;
-            gap: 4px; /* Робить фіксовані мікро-відступи між елементами без дірок */
+            gap: 14px;
         }
-
-        .offer-item:last-child {
-            margin-bottom: 0;
-        }
-
-        .offer-item h3 {
-            margin: 0;
-            font-size: 14px;
-            line-height: 1.2;
-        }
-
-        .offer-item h3 a {
-            color: #60a5fa;
-            text-decoration: none;
-        }
-
-        .offer-item h3 a:hover {
-            text-decoration: underline;
-        }
-
-        .offer-item p {
-            margin: 0;
-            font-size: 12.5px;
-            color: #94a3b8;
-            line-height: 1.35;
-        }
-
-        .divider {
-            border: 0;
-            height: 1px;
-            background: #1e293b;
-            margin: 4px 0; /* Максимально тонка лінія без пустих проміжків */
-        }
-
-        .meta-row {
-            font-size: 13px;
-            font-weight: bold;
+        .card {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #232d45;
             display: flex;
+            gap: 20px;
             align-items: center;
-            gap: 15px;
-            margin: 0;
-            padding: 0;
         }
-
-        .status-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
+        .card-img {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            border-radius: 8px;
+            background: #ffffff;
+            padding: 5px;
+        }
+        .card-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .card-meta {
+            display: flex;
+            justify-content: space-between;
             font-size: 12px;
+            color: #64748b;
         }
-
-        .date-text {
-            font-size: 11px;
-            color: #576b85;
-            margin: 0;
+        .source {
+            background: #1e293b;
+            color: #38bdf8;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: bold;
         }
+        .country-badge {
+            background: #2e3b52;
+            color: #fff;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-right: 5px;
+        }
+        .title {
+            color: #f8fafc;
+            font-size: 16px;
+            text-decoration: none;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+        .title:hover { text-decoration: underline; color: #38bdf8; }
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 5px;
+        }
+        .price {
+            font-size: 18px;
+            color: var(--green);
+            font-weight: 700;
+        }
+        .link-btn {
+            background: #10b981;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+        .link-btn:hover { background: #059669; }
+        .status { text-align: center; color: #475569; font-size: 15px; }
     </style>
 </head>
 <body>
 
-    <h1>Глобальний пошук та аналітика автозапчастин</h1>
-
+<div class="container">
+    <h1>🌍 Пан-Європейський Пошук Запчастин</h1>
+    
     <div class="search-box">
-        <input type="text" id="queryInput" placeholder="Наприклад: Передній бампер Мерседес 240 1996 р.в.">
-        <button id="actionBtn" onclick="doSearch()">Знайти</button>
+        <input type="text" id="targetQuery" placeholder="Введіть запит або OEM номер...">
+        <button onclick="startSearch()" id="searchButton">Шукати</button>
     </div>
 
-    <div class="container">
-        <div class="card">
-            <h2>🌐 Знайдені пропозиції (Україна та Європа)</h2>
-            <div id="offersResult" class="info-text">Введіть запит для пошуку пропозицій на ринку...</div>
-        </div>
-
-        <div class="card">
-            <h2>🔧 Аналітика та розшифровка OEM</h2>
-            <div id="aiResult" class="info-text">Тут з'явиться детальний аналіз деталі та розшифровка її кодів від ШІ...</div>
-        </div>
+    <div class="grid" id="offersGrid">
+        <p class="status">Очікування введення деталі...</p>
     </div>
+</div>
 
-    <script>
-        async function doSearch() {
-            const query = document.getElementById('queryInput').value.trim();
-            if (!query) return;
-
-            const btn = document.getElementById('actionBtn');
-            const offersResult = document.getElementById('offersResult');
-            const aiResult = document.getElementById('aiResult');
-
-            btn.disabled = true;
-            btn.style.background = '#334155';
-            btn.innerText = 'Пошук...';
-            offersResult.innerHTML = '<div style="color: #576b85; font-style: italic;">Сканування...</div>';
-            aiResult.innerHTML = '<div style="color: #576b85; font-style: italic;">Аналіз ШІ...</div>';
-
-            try {
-                const response = await fetch('/search', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ query: query })
-                });
-
-                const data = await response.json();
-                aiResult.innerText = data.ai_text || 'Не вдалося отримати аналітику.';
-                offersResult.innerHTML = '';
-
-                if (data.offers && data.offers.length > 0) {
-                    data.offers.forEach(offer => {
-                        const div = document.createElement('div');
-                        div.className = 'offer-item';
-
-                        let stockColor = '#ef4444'; 
-                        let glowStyle = '0 0 6px rgba(239, 68, 68, 0.4)';
-                        
-                        if (offer.stock === 'В наявності') {
-                            stockColor = '#10b981';
-                            glowStyle = '0 0 6px rgba(16, 185, 129, 0.4)';
-                        } else if (offer.stock === 'Під замовлення') {
-                            stockColor = '#f59e0b';
-                            glowStyle = '0 0 6px rgba(245, 158, 11, 0.4)';
-                        }
-
-                        div.innerHTML = `
-                            <h3><a href="${offer.link}" target="_blank">${offer.title}</a></h3>
-                            <p>${offer.snippet}</p>
-                            <div class="divider"></div>
-                            <div class="meta-row">
-                                <span style="color: #00f2fe;">Ціна: ${offer.price}</span>
-                                <span class="status-badge" style="color: ${stockColor}; text-shadow: ${glowStyle};">
-                                    ● ${offer.stock}
-                                </span>
-                            </div>
-                            <div class="date-text">📅 Публікація: ${offer.date}</div>
-                        `;
-                        offersResult.appendChild(div);
-                    });
-                } else {
-                    offersResult.innerHTML = '<div style="color: #ef4444;">Нічого не знайдено.</div>';
-                }
-
-            } catch (e) {
-                offersResult.innerHTML = '<div style="color: #ef4444;">Помилка.</div>';
-                aiResult.innerHTML = '<div style="color: #ef4444;">Помилка.</div>';
-            } finally {
-                btn.disabled = false;
-                btn.style.background = 'linear-gradient(135deg, #2563eb, #1d4ed8)';
-                btn.innerText = 'Знайти';
+<script>
+    async function startSearch() {
+        const query = document.getElementById('targetQuery').value.trim();
+        if (!query) return;
+        
+        const grid = document.getElementById('offersGrid');
+        const btn = document.getElementById('searchButton');
+        
+        btn.disabled = true;
+        btn.textContent = 'Обробка...';
+        grid.innerHTML = '<p class="status">Сканування та конвертація валют в грн за актуальним курсом...</p>';
+        
+        try {
+            const response = await fetch('/search', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ query })
+            });
+            const data = await response.json();
+            
+            grid.innerHTML = '';
+            
+            if (!data.offers || data.offers.length === 0) {
+                grid.innerHTML = '<p class="status">Нічого не знайдено.</p>';
+                btn.disabled = false; btn.textContent = 'Шукати';
+                return;
             }
+            
+            data.offers.forEach(item => {
+                const imgTag = item.image ? `<img src="${item.image}" class="card-img" alt="part">` : `<div class="card-img" style="background: #1e293b;"></div>`;
+                
+                grid.innerHTML += `
+                    <div class="card">
+                        ${imgTag}
+                        <div class="card-info">
+                            <div class="card-meta">
+                                <div>
+                                    <span class="country-badge">${item.country || '🏳️ UA'}</span>
+                                    <span class="source">${item.source}</span>
+                                </div>
+                                <span style="color: #6ee7b7;">✓ Перевірено</span>
+                            </div>
+                            <a href="${item.link}" target="_blank" class="title">${item.title}</a>
+                            <div class="card-footer">
+                                <span class="price">${item.price}</span>
+                                <a href="${item.link}" target="_blank" class="link-btn">Відкрити товар →</a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+        } catch (e) {
+            grid.innerHTML = '<p class="status" style="color: #ef4444;">Помилка з\'єднання з сервером.</p>';
         }
-    </script>
+        
+        btn.disabled = false;
+        btn.textContent = 'Шукати';
+    }
+</script>
+
 </body>
 </html>
