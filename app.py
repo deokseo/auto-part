@@ -7,11 +7,7 @@ from flask import Flask, request, jsonify, send_from_directory
 
 app = Flask(__name__)
 
-# Твій робочий безкоштовний ключ Serper API
-SERPER_API_KEY = "d23491c477d6167ec1067dbe92dea507e5bde7ce"
 
-# Ключ OpenRouter (Виправлено підключення)
-OPENROUTER_API_KEY = "sk-or-v1-anon-parts-finder-client-generation-2026"
 
 # =======================================================
 # 1. ЖИВА ПЕРЕВІРКА НАЯВНОСТІ НА САЙТІ
