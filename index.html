@@ -3,219 +3,485 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Європейський Пошук Запчастин</title>
+    <title>Global Europe Parts Aggregator & AI OEM Engine</title>
     <style>
-        :root {
-            --bg: #0b0f19;
-            --card: #141b2d;
-            --accent: #2563eb;
-            --text: #f1f5f9;
-            --green: #10b981;
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
         body {
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            margin: 0;
-            padding: 40px 20px;
-        }
-        .container {
-            max-width: 850px;
-            margin: 0 auto;
-        }
-        h1 {
-            text-align: center;
-            color: #38bdf8;
-            font-size: 2rem;
-            margin-bottom: 30px;
-        }
-        .search-box {
+            background-color: #121212;
+            color: #e0e0e0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            height: 100vh;
             display: flex;
-            gap: 12px;
-            background: #1e293b;
-            padding: 6px;
-            border-radius: 12px;
-            border: 1px solid #334155;
-            margin-bottom: 35px;
+            flex-direction: column;
+            overflow: hidden;
         }
-        input {
+       
+        /* СТИЛЬНИЙ ОНОВЛЕНИЙ ВЕРХ (HEADER) */
+        header {
+            background: linear-gradient(135deg, #1a1a1a 0%, #141414 100%);
+            border-bottom: 1px solid rgba(0, 188, 212, 0.2);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            padding: 14px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+            gap: 20px;
+            position: relative;
+        }
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 800;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: linear-gradient(45deg, #00bcd4, #00e5ff);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+       
+        /* Сучасна інтегрована форма пошуку */
+        .search-form {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            width: 55%;
+            max-width: 700px;
+            background-color: #222222;
+            border: 1px solid #333333;
+            border-radius: 8px;
+            padding: 4px 6px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .search-form:focus-within {
+            border-color: #00bcd4;
+            box-shadow: 0 0 18px rgba(0, 188, 212, 0.25);
+            background-color: #262626;
+        }
+        .search-input {
             flex: 1;
-            padding: 14px;
             background: transparent;
             border: none;
-            color: white;
-            font-size: 16px;
+            color: #fff;
+            padding: 10px 12px;
+            font-size: 14px;
             outline: none;
+            font-weight: 500;
         }
-        button {
-            background: var(--accent);
-            color: white;
+        .search-input::placeholder {
+            color: #666;
+        }
+        .search-btn {
+            background: linear-gradient(135deg, #00bcd4 0%, #0097a7 100%);
+            color: #121212;
             border: none;
-            padding: 0 28px;
-            border-radius: 8px;
-            font-weight: 600;
+            border-radius: 6px;
+            padding: 10px 26px;
+            font-weight: bold;
+            font-size: 13px;
             cursor: pointer;
-            transition: background 0.15s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.2s ease;
         }
-        button:hover { background: #1d4ed8; }
-        button:disabled { background: #475569; cursor: not-allowed; }
-        .grid {
+        .search-btn:hover {
+            background: linear-gradient(135deg, #00e5ff 0%, #00bcd4 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 229, 255, 0.2);
+        }
+
+        /* === ПЛАВНА КРАСИВА ЛІНІЯ ПІД ПОШУКОМ === */
+        .loading-bar {
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: #222;
+            border-radius: 0 0 8px 8px;
+            overflow: hidden;
+            display: none;
+        }
+        .loading-progress {
+            position: absolute;
+            height: 100%;
+            width: 32%;
+            background: linear-gradient(90deg, #00bcd4, #00f0ff, #00bcd4);
+            box-shadow: 0 0 14px #00e5ff;
+            animation: elegantLine 2.4s ease-in-out infinite;
+        }
+        @keyframes elegantLine {
+            0%   { left: -25%; }
+            50%  { left: calc(100% - 32%); }
+            100% { left: -25%; }
+        }
+
+        .main-container {
             display: flex;
-            flex-direction: column;
-            gap: 14px;
-        }
-        .card {
-            background: var(--card);
-            border-radius: 12px;
-            padding: 20px;
-            border: 1px solid #232d45;
-            display: flex;
-            gap: 20px;
-            align-items: center;
-        }
-        .card-img {
-            width: 100px;
-            height: 100px;
-            object-fit: contain;
-            border-radius: 8px;
-            background: #ffffff;
-            padding: 5px;
-        }
-        .card-info {
             flex: 1;
+            overflow: hidden;
+        }
+       
+        .offers-panel {
+            flex: 3;
+            padding: 20px;
+            overflow-y: auto;
+            border-right: 1px solid #2d2d2d;
+        }
+        .panel-title {
+            font-size: 14px;
+            text-transform: uppercase;
+            color: #00bcd4;
+            margin-bottom: 20px;
+            letter-spacing: 0.5px;
+        }
+        .offers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 16px;
+        }
+        .no-data {
+            color: #888;
+            font-style: italic;
+            grid-column: 1 / -1;
+            text-align: center;
+            padding-top: 40px;
+            font-size: 14px;
+        }
+       
+        .offer-card {
+            background-color: #1c1c1c;
+            border: 1px solid #2d2d2d;
+            border-radius: 6px;
+            overflow: hidden;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        .offer-card:hover {
+            transform: translateY(-2px);
+            border-color: #444;
+        }
+        .card-img-container {
+            width: 100%;
+            height: 140px;
+            background-color: #151515;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid #252525;
+            position: relative;
+        }
+        .card-img-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        .source-badge {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background-color: rgba(18, 18, 18, 0.85);
+            color: #00bcd4;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: bold;
+            border: 1px solid #00bcd4;
+            max-width: 85%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .card-content {
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            gap: 8px;
+        }
+       
+        .card-title {
+            font-size: 12px;
+            font-weight: 500;
+            line-height: 1.4;
+            height: 34px;
+            overflow: hidden;
+            color: #d5d5d5;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
         }
         .card-meta {
             display: flex;
-            justify-content: space-between;
-            font-size: 12px;
-            color: #64748b;
-        }
-        .source {
-            background: #1e293b;
-            color: #38bdf8;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-weight: bold;
-        }
-        .country-badge {
-            background: #2e3b52;
-            color: #fff;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-weight: bold;
-            margin-right: 5px;
-        }
-        .title {
-            color: #f8fafc;
-            font-size: 16px;
-            text-decoration: none;
-            font-weight: 600;
-            line-height: 1.4;
-        }
-        .title:hover { text-decoration: underline; color: #38bdf8; }
-        .card-footer {
-            display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-top: 5px;
+            justify-content: space-between;
+            margin-top: auto;
+            padding-top: 4px;
         }
-        .price {
-            font-size: 18px;
-            color: var(--green);
-            font-weight: 700;
-        }
-        .link-btn {
-            background: #10b981;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 6px;
-            text-decoration: none;
+        .card-price {
             font-size: 14px;
-            font-weight: 600;
-            transition: background 0.2s;
+            font-weight: bold;
+            color: #ffb300;
         }
-        .link-btn:hover { background: #059669; }
-        .status { text-align: center; color: #475569; font-size: 15px; }
+        .status-badge {
+            font-size: 11px;
+            font-weight: bold;
+        }
+        .card-link {
+            display: block;
+            text-align: center;
+            background-color: #2a2a2a;
+            color: #00bcd4;
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: bold;
+            padding: 8px;
+            border-radius: 4px;
+            margin-top: 4px;
+            transition: background-color 0.2s;
+        }
+        .card-link:hover {
+            background-color: #333;
+            color: #00e5ff;
+        }
+        .ai-sidebar {
+            flex: 1;
+            min-width: 320px;
+            max-width: 420px;
+            background-color: #171717;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .sidebar-title {
+            font-size: 14px;
+            text-transform: uppercase;
+            color: #00bcd4;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .ai-card {
+            background-color: #222;
+            border-radius: 6px;
+            padding: 16px;
+            border-left: 4px solid #ff9800;
+        }
+        .ai-label {
+            font-size: 11px;
+            color: #888;
+            text-transform: uppercase;
+            margin-bottom: 2px;
+        }
+        .ai-val {
+            font-size: 14px;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 12px;
+        }
+        .oem-block {
+            background-color: #1a1a1a;
+            border: 1px dashed #ff9800;
+            border-radius: 4px;
+            padding: 12px;
+            text-align: center;
+            margin-top: 10px;
+        }
+        .oem-header {
+            font-size: 11px;
+            color: #ff9800;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+        .oem-code {
+            font-size: 18px;
+            font-weight: 900;
+            color: #fff;
+            letter-spacing: 0.5px;
+        }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>🌍 Пан-Європейський Пошук Запчастин</h1>
-    
-    <div class="search-box">
-        <input type="text" id="targetQuery" placeholder="Введіть запит або OEM номер...">
-        <button onclick="startSearch()" id="searchButton">Шукати</button>
+    <header>
+        <div class="logo-area">
+            🛠️ Global Europe Parts Aggregator
+        </div>
+        <form class="search-form" id="searchForm">
+            <input type="text" class="search-input" id="queryInput" placeholder="Введіть будь-який запит (наприклад: бампер мерс 240 1996 рв)..." required>
+            <button type="submit" class="search-btn" id="searchBtn">Шукати</button>
+        </form>
+        <div style="font-size:11px; color:#555; font-weight: bold;">v4.5 (Direct Engine)</div>
+
+        <!-- Красива лінія під пошуком -->
+        <div class="loading-bar" id="loadingBar">
+            <div class="loading-progress"></div>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <div class="offers-panel">
+            <div class="panel-title" id="offersTitle">Знайдені пропозиції з усіх сайтів ринку</div>
+            <div class="offers-grid" id="offersGrid">
+                <div class="no-data">Введіть пошуковий запит вище для старту агрегації лотів...</div>
+            </div>
+        </div>
+
+        <div class="ai-sidebar">
+            <div class="sidebar-title">🔧 Інтелектуальний ШІ-аналіз</div>
+            <div id="aiContainer">
+                <div class="ai-card" style="border-left-color: #444;">
+                    <div style="color:#666; font-size:12px; font-style:italic;">Очікування пошукового запиту...</div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="grid" id="offersGrid">
-        <p class="status">Очікування введення деталі...</p>
-    </div>
-</div>
-
-<script>
-    async function startSearch() {
-        const query = document.getElementById('targetQuery').value.trim();
-        if (!query) return;
-        
-        const grid = document.getElementById('offersGrid');
-        const btn = document.getElementById('searchButton');
-        
-        btn.disabled = true;
-        btn.textContent = 'Обробка...';
-        grid.innerHTML = '<p class="status">Сканування та конвертація валют в грн за актуальним курсом...</p>';
-        
-        try {
-            const response = await fetch('/search', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ query })
-            });
-            const data = await response.json();
-            
-            grid.innerHTML = '';
-            
-            if (!data.offers || data.offers.length === 0) {
-                grid.innerHTML = '<p class="status">Нічого не знайдено.</p>';
-                btn.disabled = false; btn.textContent = 'Шукати';
-                return;
-            }
-            
-            data.offers.forEach(item => {
-                const imgTag = item.image ? `<img src="${item.image}" class="card-img" alt="part">` : `<div class="card-img" style="background: #1e293b;"></div>`;
-                
-                grid.innerHTML += `
-                    <div class="card">
-                        ${imgTag}
-                        <div class="card-info">
-                            <div class="card-meta">
-                                <div>
-                                    <span class="country-badge">${item.country || '🏳️ UA'}</span>
-                                    <span class="source">${item.source}</span>
+    <script>
+        document.getElementById('searchForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+           
+            const query = document.getElementById('queryInput').value.trim();
+            if(!query) return;
+           
+            const searchBtn = document.getElementById('searchBtn');
+            const offersGrid = document.getElementById('offersGrid');
+            const aiContainer = document.getElementById('aiContainer');
+            const loadingBar = document.getElementById('loadingBar');
+           
+            searchBtn.disabled = true;
+            searchBtn.innerText = "Аналіз...";
+            loadingBar.style.display = "block";
+           
+            offersGrid.innerHTML = `<div class="no-data" style="color: #00bcd4;">🔍 ШІ аналізує запит, визначає марку автомобіля та запускає сканування ринку...</div>`;
+            aiContainer.innerHTML = `
+                <div class="ai-card" style="border-left-color: #00bcd4;">
+                    <div class="oem-header" style="color: #00bcd4;">ШІ-ІНТЕРПРЕТАТОР . . .</div>
+                    <div style="font-size:12px; color:#aaa; margin-top:5px;">Визначаємо кузов машини та генеруємо OEM кроси з бази даних...</div>
+                </div>
+            `;
+           
+            try {
+                const response = await fetch('/search', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query: query })
+                });
+               
+                const data = await response.json();
+               
+                // Рендеринг карток лотів
+                offersGrid.innerHTML = '';
+                if(data.offers && data.offers.length > 0) {
+                    data.offers.forEach(offer => {
+                        const card = document.createElement('div');
+                        card.className = 'offer-card';
+                       
+                        let statusColor = '#2ecc71';
+                        if(offer.availability === 'Під замовлення') statusColor = '#f1c40f';
+                        if(offer.availability === 'Немає в наявності') statusColor = '#e74c3c';
+                       
+                        card.innerHTML = `
+                            <div class="card-img-container">
+                                <span class="source-badge" title="${offer.source}">${offer.source}</span>
+                                <img src="${offer.image}" alt="" onerror="this.src='https://placehold.co/200x140/1a1a1a/666666?text=No+Photo'">
+                            </div>
+                            <div class="card-content">
+                                <div class="card-title" title="${offer.title}">${offer.title}</div>
+                                <div class="card-meta">
+                                    <span class="card-price">${offer.price}</span>
+                                    <span class="status-badge" style="color: ${statusColor};">● ${offer.availability || 'В наявності'}</span>
                                 </div>
-                                <span style="color: #6ee7b7;">✓ Перевірено</span>
+                                <a href="${offer.link}" target="_blank" class="card-link">Пряме посилання на лот</a>
                             </div>
-                            <a href="${item.link}" target="_blank" class="title">${item.title}</a>
-                            <div class="card-footer">
-                                <span class="price">${item.price}</span>
-                                <a href="${item.link}" target="_blank" class="link-btn">Відкрити товар →</a>
+                        `;
+                        offersGrid.appendChild(card);
+                    });
+                } else {
+                    offersGrid.innerHTML = `<div class="no-data">Жодного оголошення не знайдено за цим запитом. ШІ автоматично розширив зону пошуку, спробуйте уточнити деталі.</div>`;
+                }
+               
+                // Рендеринг ШІ-панелі (OEM коди)
+                aiContainer.innerHTML = '';
+                const meta = data.metadata;
+               
+                let matchesHtml = '';
+                if(meta.possible_matches && meta.possible_matches.length > 0) {
+                    meta.possible_matches.forEach(m => {
+                        let bullets = '';
+                        if(m.breakdown) {
+                            m.breakdown.forEach(b => { bullets += `<li>${b}</li>`; });
+                        }
+                       
+                        matchesHtml += `
+                            <div class="ai-card" style="margin-bottom: 12px;">
+                                <div class="ai-label">Визначена модель авто</div>
+                                <div class="ai-val">${m.model || '-'}</div>
+                               
+                                <div style="display:flex; gap:10px;">
+                                    <div style="flex:1;">
+                                        <div class="ai-label">Кузов / Платформа</div>
+                                        <div class="ai-val" style="font-size:12px;">${m.chassis || '-'}</div>
+                                    </div>
+                                    <div style="flex:1;">
+                                        <div class="ai-label">Роки виробництва</div>
+                                        <div class="ai-val" style="font-size:12px;">${m.years || '-'}</div>
+                                    </div>
+                                </div>
+                               
+                                <div class="oem-block">
+                                    <div class="oem-header">КОД ОРИГІНАЛУ (${m.source || 'OEM'})</div>
+                                    <div class="oem-code">${m.oem_code || 'НЕ ЗНАЙДЕНО'}</div>
+                                </div>
+                               
+                                <ul class="breakdown-list">${bullets}</ul>
                             </div>
+                        `;
+                    });
+                } else {
+                    matchesHtml = `
+                        <div class="ai-card">
+                            <div style="color:#aaa; font-size:12px;">Не вдалося згенерувати технічні кроси для деталі.</div>
                         </div>
+                    `;
+                }
+               
+                aiContainer.innerHTML = `
+                    <div style="margin-bottom: 10px;">
+                        <div class="ai-label">Тип запчастини</div>
+                        <div class="ai-val" style="color: #00bcd4;">${meta.part_type || 'Автозапчастина'}</div>
+                        <div class="ai-label">Група / Позиція монтажу</div>
+                        <div class="ai-val" style="color: #00bcd4; margin-bottom:15px;">${meta.position || 'Вузол'}</div>
                     </div>
+                    <div class="ai-label" style="margin-bottom:8px; font-weight:bold; color:#ff9800;">Заводські крос-коди з бази даних:</div>
+                    ${matchesHtml}
                 `;
-            });
-            
-        } catch (e) {
-            grid.innerHTML = '<p class="status" style="color: #ef4444;">Помилка з\'єднання з сервером.</p>';
-        }
-        
-        btn.disabled = false;
-        btn.textContent = 'Шукати';
-    }
-</script>
-
+               
+            } catch (err) {
+                console.error(err);
+                offersGrid.innerHTML = `<div class="no-data" style="color:#e74c3c;">Критична помилка з'єднання з бекендом.</div>`;
+                aiContainer.innerHTML = `<div class="ai-card" style="border-left-color:#e74c3c;"><div style="color:#e74c3c;">Помилка обробки запиту моделлю ШІ.</div></div>`;
+            } finally {
+                searchBtn.disabled = false;
+                searchBtn.innerText = "Шукати";
+                loadingBar.style.display = "none";
+            }
+        });
+    </script>
 </body>
 </html>
