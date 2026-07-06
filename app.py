@@ -6,7 +6,8 @@ import requests
 from flask import Flask, request, jsonify, send_from_directory
 
 app = Flask(__name__)
-
+SERPER_API_KEY = os.getenv('SERPER_API_KEY', "")
+OPENROUTER_API_KEY = os.getenv('OPENROUTER_API_KEY', "")
 
 
 # =======================================================
