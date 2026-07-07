@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Global Europe Parts Aggregator & AI OEM Engine</title>
+    <title>Global Europe Parts Aggregator</title>
     <style>
         * {
             box-sizing: border-box;
@@ -19,13 +19,30 @@
             flex-direction: column;
             overflow: hidden;
         }
-       
-        /* СТИЛЬНИЙ ОНОВЛЕНИЙ ВЕРХ (HEADER) */
+
+        /* ТЕМНИЙ СТИЛЬНИЙ СКРОЛБАР */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #141414;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2a2a2a;
+            border-radius: 4px;
+            border: 1px solid #141414;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00bcd4;
+        }
+        
+        /* ШАПКА З ВІДСТУПОМ 24px І БЕЗ ТЕКСТУ ВЕРСІЇ */
         header {
             background: linear-gradient(135deg, #1a1a1a 0%, #141414 100%);
             border-bottom: 1px solid rgba(0, 188, 212, 0.2);
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-            padding: 14px 30px;
+            padding: 24px 30px; 
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -46,44 +63,63 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-       
-        /* Сучасна інтегрована форма пошуку */
+        
+        /* ПОШУКОВА КАПСУЛА */
         .search-form {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
             display: flex;
             align-items: center;
             gap: 6px;
-            width: 55%;
-            max-width: 700px;
-            background-color: #222222;
-            border: 1px solid #333333;
-            border-radius: 8px;
-            padding: 4px 6px;
+            width: 45%;
+            max-width: 650px;
+            background: rgba(255, 255, 255, 0.05); 
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 30px; 
+            padding: 5px 8px;
             transition: all 0.3s ease;
-            position: relative;
+            z-index: 10;
         }
         .search-form:focus-within {
-            border-color: #00bcd4;
-            box-shadow: 0 0 18px rgba(0, 188, 212, 0.25);
-            background-color: #262626;
+            border-color: rgba(0, 188, 212, 0.6);
+            box-shadow: 0 0 20px rgba(0, 188, 212, 0.2);
+            background: rgba(255, 255, 255, 0.08);
         }
+
+        /* ЗАХИСТ ВІД БІЛОГО ФОНУ ІНПУТУ */
         .search-input {
             flex: 1;
-            background: transparent;
-            border: none;
-            color: #fff;
-            padding: 10px 12px;
+            background: transparent !important; 
+            border: none !important;
+            color: #ffffff !important;
+            padding: 10px 16px;
             font-size: 14px;
-            outline: none;
+            outline: none !important;
             font-weight: 500;
+            box-shadow: none !important;
         }
         .search-input::placeholder {
-            color: #666;
+            color: rgba(255, 255, 255, 0.35);
         }
+
+        /* Фікс автозаповнення Chrome */
+        .search-input:-webkit-autofill,
+        .search-input:-webkit-autofill:hover, 
+        .search-input:-webkit-autofill:focus,
+        .search-input:-webkit-autofill:active {
+            -webkit-text-fill-color: #ffffff !important;
+            -webkit-box-shadow: 0 0 0px 1000px #1a1a1a inset !important;
+            transition: background-color 5000s ease-in-out 0s;
+        }
+
         .search-btn {
             background: linear-gradient(135deg, #00bcd4 0%, #0097a7 100%);
             color: #121212;
             border: none;
-            border-radius: 6px;
+            border-radius: 25px; 
             padding: 10px 26px;
             font-weight: bold;
             font-size: 13px;
@@ -95,33 +131,37 @@
         .search-btn:hover {
             background: linear-gradient(135deg, #00e5ff 0%, #00bcd4 100%);
             transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(0, 229, 255, 0.2);
         }
 
-        /* === ПЛАВНА КРАСИВА ЛІНІЯ ПІД ПОШУКОМ === */
         .loading-bar {
             position: absolute;
-            bottom: -4px;
+            bottom: 0;
             left: 0;
             width: 100%;
-            height: 3px;
-            background: #222;
-            border-radius: 0 0 8px 8px;
+            height: 4px;
+            background: rgba(0, 188, 212, 0.05);
             overflow: hidden;
             display: none;
         }
         .loading-progress {
             position: absolute;
             height: 100%;
-            width: 32%;
-            background: linear-gradient(90deg, #00bcd4, #00f0ff, #00bcd4);
-            box-shadow: 0 0 14px #00e5ff;
-            animation: elegantLine 2.4s ease-in-out infinite;
+            width: 40%;
+            background: linear-gradient(90deg, transparent, #00e5ff, #00bcd4, transparent);
+            animation: elegantLine 1.6s infinite linear;
         }
         @keyframes elegantLine {
-            0%   { left: -25%; }
-            50%  { left: calc(100% - 32%); }
-            100% { left: -25%; }
+            0%   { transform: translateX(-100%); }
+            100% { transform: translateX(250%); }
+        }
+
+        .skeleton-pulse {
+            animation: pulse 1.4s infinite ease-in-out;
+        }
+        @keyframes pulse {
+            0% { opacity: 0.4; }
+            50% { opacity: 0.8; }
+            100% { opacity: 0.4; }
         }
 
         .main-container {
@@ -129,7 +169,7 @@
             flex: 1;
             overflow: hidden;
         }
-       
+        
         .offers-panel {
             flex: 3;
             padding: 20px;
@@ -156,7 +196,7 @@
             padding-top: 40px;
             font-size: 14px;
         }
-       
+        
         .offer-card {
             background-color: #1c1c1c;
             border: 1px solid #2d2d2d;
@@ -196,10 +236,6 @@
             font-size: 10px;
             font-weight: bold;
             border: 1px solid #00bcd4;
-            max-width: 85%;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
         }
         .card-content {
             padding: 12px;
@@ -208,7 +244,6 @@
             flex: 1;
             gap: 8px;
         }
-       
         .card-title {
             font-size: 12px;
             font-weight: 500;
@@ -226,7 +261,6 @@
             align-items: center;
             justify-content: space-between;
             margin-top: auto;
-            padding-top: 4px;
         }
         .card-price {
             font-size: 14px;
@@ -254,6 +288,8 @@
             background-color: #333;
             color: #00e5ff;
         }
+
+        /* БОКОВА ПАНЕЛЬ ШІ */
         .ai-sidebar {
             flex: 1;
             min-width: 320px;
@@ -270,15 +306,13 @@
             text-transform: uppercase;
             color: #00bcd4;
             letter-spacing: 0.5px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
         }
         .ai-card {
             background-color: #222;
             border-radius: 6px;
             padding: 16px;
             border-left: 4px solid #ff9800;
+            margin-bottom: 15px;
         }
         .ai-label {
             font-size: 11px;
@@ -292,27 +326,44 @@
             color: #fff;
             margin-bottom: 12px;
         }
+        
+        /* ДИНАМІЧНИЙ СПИСОК КОДІВ */
+        .oem-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 10px;
+        }
         .oem-block {
             background-color: #1a1a1a;
-            border: 1px dashed #ff9800;
+            border: 1px dashed rgba(255, 152, 0, 0.4);
             border-radius: 4px;
-            padding: 12px;
-            text-align: center;
-            margin-top: 10px;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         .oem-header {
             font-size: 11px;
             color: #ff9800;
             font-weight: bold;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 4px;
         }
         .oem-code {
-            font-size: 18px;
+            font-size: 15px;
             font-weight: 900;
             color: #fff;
+            font-family: monospace;
             letter-spacing: 0.5px;
+        }
+        .breakdown-list {
+            margin-top: 12px;
+            padding-left: 16px;
+            font-size: 12px;
+            color: #ccc;
+        }
+        .breakdown-list li {
+            margin-bottom: 6px;
         }
     </style>
 </head>
@@ -320,15 +371,12 @@
 
     <header>
         <div class="logo-area">
-            🛠️ Global Europe Parts Aggregator
+            🛠️ Europe Parts Aggregator
         </div>
         <form class="search-form" id="searchForm">
-            <input type="text" class="search-input" id="queryInput" placeholder="Введіть будь-який запит (наприклад: бампер мерс 240 1996 рв)..." required>
+            <input type="text" class="search-input" id="queryInput" placeholder="Введіть запит (наприклад: насос форсунка 1.9 tdi)..." required>
             <button type="submit" class="search-btn" id="searchBtn">Шукати</button>
         </form>
-        <div style="font-size:11px; color:#555; font-weight: bold;">v4.5 (Direct Engine)</div>
-
-        <!-- Красива лінія під пошуком -->
         <div class="loading-bar" id="loadingBar">
             <div class="loading-progress"></div>
         </div>
@@ -336,17 +384,17 @@
 
     <div class="main-container">
         <div class="offers-panel">
-            <div class="panel-title" id="offersTitle">Знайдені пропозиції з усіх сайтів ринку</div>
+            <div class="panel-title" id="offersTitle">Результати агрегації пропозицій</div>
             <div class="offers-grid" id="offersGrid">
-                <div class="no-data">Введіть пошуковий запит вище для старту агрегації лотів...</div>
+                <div class="no-data">Очікування пошукового запиту користувача...</div>
             </div>
         </div>
 
         <div class="ai-sidebar">
-            <div class="sidebar-title">🔧 Інтелектуальний ШІ-аналіз</div>
+            <div class="sidebar-title">🔧 База крос-номерів та сумісності</div>
             <div id="aiContainer">
                 <div class="ai-card" style="border-left-color: #444;">
-                    <div style="color:#666; font-size:12px; font-style:italic;">Очікування пошукового запиту...</div>
+                    <div style="color:#666; font-size:12px; font-style:italic;">Введіть деталь для запуску аналізу баз даних...</div>
                 </div>
             </div>
         </div>
@@ -355,127 +403,146 @@
     <script>
         document.getElementById('searchForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-           
+            
             const query = document.getElementById('queryInput').value.trim();
             if(!query) return;
-           
+            
             const searchBtn = document.getElementById('searchBtn');
             const offersGrid = document.getElementById('offersGrid');
             const aiContainer = document.getElementById('aiContainer');
             const loadingBar = document.getElementById('loadingBar');
-           
+            
             searchBtn.disabled = true;
-            searchBtn.innerText = "Аналіз...";
+            searchBtn.innerText = "Пошук...";
             loadingBar.style.display = "block";
-           
-            offersGrid.innerHTML = `<div class="no-data" style="color: #00bcd4;">🔍 ШІ аналізує запит, визначає марку автомобіля та запускає сканування ринку...</div>`;
+            
+            // Анімація завантаження карток
+            let skeletonHtml = '';
+            for(let i = 0; i < 4; i++) {
+                skeletonHtml += `
+                    <div class="offer-card skeleton-pulse" style="pointer-events: none;">
+                        <div class="card-img-container"></div>
+                        <div class="card-content">
+                            <div style="background: #252525; height: 12px; border-radius: 4px; width: 85%;"></div>
+                            <div class="card-meta" style="margin-top: auto;">
+                                <div style="background: #252525; height: 14px; border-radius: 4px; width: 30%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            offersGrid.innerHTML = skeletonHtml;
+
             aiContainer.innerHTML = `
-                <div class="ai-card" style="border-left-color: #00bcd4;">
-                    <div class="oem-header" style="color: #00bcd4;">ШІ-ІНТЕРПРЕТАТОР . . .</div>
-                    <div style="font-size:12px; color:#aaa; margin-top:5px;">Визначаємо кузов машини та генеруємо OEM кроси з бази даних...</div>
+                <div class="ai-card skeleton-pulse" style="border-left-color: #00bcd4;">
+                    <div class="oem-header" style="color: #00bcd4;">ГЕНЕРАЦІЯ ТЕХНІЧНИХ КРОСІВ . . .</div>
+                    <div style="font-size:12px; color:#aaa; margin-top:5px;">Збираємо OEM артикули та аналоги виробників...</div>
                 </div>
             `;
-           
+            
             try {
                 const response = await fetch('/search', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ query: query })
                 });
-               
+                
                 const data = await response.json();
-               
-                // Рендеринг карток лотів
+                
+                // Рендер карток ринку
                 offersGrid.innerHTML = '';
                 if(data.offers && data.offers.length > 0) {
                     data.offers.forEach(offer => {
                         const card = document.createElement('div');
                         card.className = 'offer-card';
-                       
-                        let statusColor = '#2ecc71';
-                        if(offer.availability === 'Під замовлення') statusColor = '#f1c40f';
-                        if(offer.availability === 'Немає в наявності') statusColor = '#e74c3c';
-                       
                         card.innerHTML = `
                             <div class="card-img-container">
-                                <span class="source-badge" title="${offer.source}">${offer.source}</span>
+                                <span class="source-badge">${offer.source}</span>
                                 <img src="${offer.image}" alt="" onerror="this.src='https://placehold.co/200x140/1a1a1a/666666?text=No+Photo'">
                             </div>
                             <div class="card-content">
                                 <div class="card-title" title="${offer.title}">${offer.title}</div>
                                 <div class="card-meta">
                                     <span class="card-price">${offer.price}</span>
-                                    <span class="status-badge" style="color: ${statusColor};">● ${offer.availability || 'В наявності'}</span>
+                                    <span class="status-badge" style="color: #2ecc71;">● ${offer.availability}</span>
                                 </div>
-                                <a href="${offer.link}" target="_blank" class="card-link">Пряме посилання на лот</a>
+                                <a href="${offer.link}" target="_blank" class="card-link">Перейти до лоту</a>
                             </div>
                         `;
                         offersGrid.appendChild(card);
                     });
                 } else {
-                    offersGrid.innerHTML = `<div class="no-data">Жодного оголошення не знайдено за цим запитом. ШІ автоматично розширив зону пошуку, спробуйте уточнити деталі.</div>`;
+                    offersGrid.innerHTML = `<div class="no-data">Нічого не знайдено за цим запитом.</div>`;
                 }
-               
-                // Рендеринг ШІ-панелі (OEM коди)
+                
+                // Рендер ШІ з підтримкою БАГАТЬОХ OEM кодів
                 aiContainer.innerHTML = '';
                 const meta = data.metadata;
-               
-                let matchesHtml = '';
+                
+                aiContainer.innerHTML = `
+                    <div style="margin-bottom: 15px;">
+                        <div class="ai-label">Категорія компонента</div>
+                        <div class="ai-val" style="color: #00bcd4;">${meta.part_type || 'Запчастина'}</div>
+                        <div class="ai-label">Локація / Вузол</div>
+                        <div class="ai-val" style="color: #00bcd4;">${meta.position || '-'}</div>
+                    </div>
+                `;
+
                 if(meta.possible_matches && meta.possible_matches.length > 0) {
                     meta.possible_matches.forEach(m => {
+                        const matchCard = document.createElement('div');
+                        matchCard.className = 'ai-card';
+                        
+                        // Цикл для збору всіх згенерованих OEM кодів
+                        let codesHtml = '<div class="oem-container">';
+                        if(m.oem_codes && m.oem_codes.length > 0) {
+                            m.oem_codes.forEach(c => {
+                                codesHtml += `
+                                    <div class="oem-block">
+                                        <div class="oem-header">${c.type}</div>
+                                        <div class="oem-code">${c.code}</div>
+                                    </div>
+                                `;
+                            });
+                        } else {
+                            codesHtml += `<div class="oem-block"><div class="oem-code">КОДІВ НЕ ЗНАЙДЕНО</div></div>`;
+                        }
+                        codesHtml += '</div>';
+
+                        // Збір чек-ліста сумісності
                         let bullets = '';
-                        if(m.breakdown) {
+                        if(m.breakdown && m.breakdown.length > 0) {
                             m.breakdown.forEach(b => { bullets += `<li>${b}</li>`; });
                         }
-                       
-                        matchesHtml += `
-                            <div class="ai-card" style="margin-bottom: 12px;">
-                                <div class="ai-label">Визначена модель авто</div>
-                                <div class="ai-val">${m.model || '-'}</div>
-                               
-                                <div style="display:flex; gap:10px;">
-                                    <div style="flex:1;">
-                                        <div class="ai-label">Кузов / Платформа</div>
-                                        <div class="ai-val" style="font-size:12px;">${m.chassis || '-'}</div>
-                                    </div>
-                                    <div style="flex:1;">
-                                        <div class="ai-label">Роки виробництва</div>
-                                        <div class="ai-val" style="font-size:12px;">${m.years || '-'}</div>
-                                    </div>
+
+                        matchCard.innerHTML = `
+                            <div class="ai-label">Основне застосування</div>
+                            <div class="ai-val" style="font-size:15px;">${m.model}</div>
+                            
+                            <div style="display:flex; gap:10px;">
+                                <div style="flex:1;">
+                                    <div class="ai-label">Платформа</div>
+                                    <div class="ai-val" style="font-size:12px; margin-bottom:8px;">${m.chassis || '-'}</div>
                                 </div>
-                               
-                                <div class="oem-block">
-                                    <div class="oem-header">КОД ОРИГІНАЛУ (${m.source || 'OEM'})</div>
-                                    <div class="oem-code">${m.oem_code || 'НЕ ЗНАЙДЕНО'}</div>
+                                <div style="flex:1;">
+                                    <div class="ai-label">Роки виробництва</div>
+                                    <div class="ai-val" style="font-size:12px; margin-bottom:8px;">${m.years || '-'}</div>
                                 </div>
-                               
-                                <ul class="breakdown-list">${bullets}</ul>
                             </div>
+                            
+                            <div class="ai-label" style="margin-top:5px; font-weight:bold; color:#ff9800;">Знайдені крос-номери деталі:</div>
+                            ${codesHtml}
+                            
+                            ${bullets ? `<ul class="breakdown-list">${bullets}</ul>` : ''}
                         `;
+                        aiContainer.appendChild(matchCard);
                     });
-                } else {
-                    matchesHtml = `
-                        <div class="ai-card">
-                            <div style="color:#aaa; font-size:12px;">Не вдалося згенерувати технічні кроси для деталі.</div>
-                        </div>
-                    `;
                 }
-               
-                aiContainer.innerHTML = `
-                    <div style="margin-bottom: 10px;">
-                        <div class="ai-label">Тип запчастини</div>
-                        <div class="ai-val" style="color: #00bcd4;">${meta.part_type || 'Автозапчастина'}</div>
-                        <div class="ai-label">Група / Позиція монтажу</div>
-                        <div class="ai-val" style="color: #00bcd4; margin-bottom:15px;">${meta.position || 'Вузол'}</div>
-                    </div>
-                    <div class="ai-label" style="margin-bottom:8px; font-weight:bold; color:#ff9800;">Заводські крос-коди з бази даних:</div>
-                    ${matchesHtml}
-                `;
-               
+                
             } catch (err) {
                 console.error(err);
-                offersGrid.innerHTML = `<div class="no-data" style="color:#e74c3c;">Критична помилка з'єднання з бекендом.</div>`;
-                aiContainer.innerHTML = `<div class="ai-card" style="border-left-color:#e74c3c;"><div style="color:#e74c3c;">Помилка обробки запиту моделлю ШІ.</div></div>`;
+                offersGrid.innerHTML = `<div class="no-data" style="color:#e74c3c;">Помилка з'єднання з сервером.</div>`;
+                aiContainer.innerHTML = `<div class="ai-card" style="border-left-color:#e74c3c;"><div style="color:#e74c3c;">Не вдалося завантажити кроси деталей.</div></div>`;
             } finally {
                 searchBtn.disabled = false;
                 searchBtn.innerText = "Шукати";
