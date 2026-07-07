@@ -7,7 +7,7 @@ from flask import Flask, request, jsonify, send_from_directory
 
 app = Flask(__name__)
 
-SERPER_API_KEY = os.environ.get("SERPER_API_KEY", "")
+SERPER_API_KEY = os.environ.get("SERPER_API_KEY")
 
 
 def get_live_page_details(url):
